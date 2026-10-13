@@ -1,0 +1,15 @@
+{
+  "name": "minimal",
+  "root": {
+    "type": "dir",
+    "owner": "root",
+    "children": {
+      "hello.txt": {
+        "type": "file",
+        "owner": "user",
+        "content": "Hello, VFS!",
+        "encoding": "utf-8"
+      }
+    }
+  }
+}

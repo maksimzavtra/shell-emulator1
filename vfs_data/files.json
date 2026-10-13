@@ -1,0 +1,27 @@
+{
+  "name": "files",
+  "root": {
+    "type": "dir",
+    "owner": "root",
+    "children": {
+      "readme.md": {
+        "type": "file",
+        "owner": "user",
+        "content": "# README file",
+        "encoding": "utf-8"
+      },
+      "notes.txt": {
+        "type": "file",
+        "owner": "user",
+        "content": "Some notes here",
+        "encoding": "utf-8"
+      },
+      "data.bin": {
+        "type": "file",
+        "owner": "user",
+        "content": "SGVsbG8gYmluYXJ5",
+        "encoding": "base64"
+      }
+    }
+  }
+}

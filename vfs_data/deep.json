@@ -1,0 +1,33 @@
+{
+  "name": "deep",
+  "root": {
+    "type": "dir",
+    "owner": "root",
+    "children": {
+      "home": {
+        "type": "dir",
+        "owner": "root",
+        "children": {
+          "user": {
+            "type": "dir",
+            "owner": "user",
+            "children": {
+              "docs": {
+                "type": "dir",
+                "owner": "user",
+                "children": {
+                  "notes.txt": {
+                    "type": "file",
+                    "owner": "user",
+                    "content": "Deep file",
+                    "encoding": "utf-8"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
