@@ -58,3 +58,14 @@ def cmd_du(vfs, cwd, args):
     if node is None:
         raise CommandError(f"du: {path}: Нет такого файла или каталога")
     return f"{_du_size(node)}\t{normalize_path(vfs, path, cwd)}"
+
+
+def cmd_chown(vfs, cwd, args):
+    if len(args) < 2:
+        raise CommandError("chown: использование: chown <owner> <path>")
+    owner, path = args[0], args[1]
+    node = resolve(vfs, path, cwd)
+    if node is None:
+        raise CommandError(f"chown: {path}: Нет такого файла или каталога")
+    node['owner'] = owner
+    return f"chown: {normalize_path(vfs, path, cwd)} -> {owner}"

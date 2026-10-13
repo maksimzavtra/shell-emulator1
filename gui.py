@@ -5,7 +5,7 @@ import socket
 
 from vfs import VFS, resolve, normalize_path
 from commands import (
-    CommandError, cmd_ls, cmd_cd, cmd_pwd, cmd_rev, cmd_du,
+    CommandError, cmd_ls, cmd_cd, cmd_pwd, cmd_rev, cmd_du, cmd_chown,
 )
 
 HANDLERS = {
@@ -14,6 +14,7 @@ HANDLERS = {
     'pwd': cmd_pwd,
     'rev': cmd_rev,
     'du': cmd_du,
+    'chown': cmd_chown,
 }
 
 

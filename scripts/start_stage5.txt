@@ -1,0 +1,8 @@
+vfs-info
+ls
+chown admin /home
+chown admin /home/user/docs/notes.txt
+chown
+chown admin /missing
+ls
+exit
