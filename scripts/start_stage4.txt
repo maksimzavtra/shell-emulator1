@@ -1,0 +1,16 @@
+pwd
+ls
+cd /home
+pwd
+ls
+cd user
+ls
+cd docs
+ls
+cd /
+du
+du /hello.txt
+rev hello
+ls /hello.txt
+cd /hello.txt
+exit

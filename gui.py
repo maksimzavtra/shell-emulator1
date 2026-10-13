@@ -4,6 +4,17 @@ import getpass
 import socket
 
 from vfs import VFS, resolve, normalize_path
+from commands import (
+    CommandError, cmd_ls, cmd_cd, cmd_pwd, cmd_rev, cmd_du,
+)
+
+HANDLERS = {
+    'ls': cmd_ls,
+    'cd': cmd_cd,
+    'pwd': cmd_pwd,
+    'rev': cmd_rev,
+    'du': cmd_du,
+}
 
 
 class ShellEmulator:
@@ -14,13 +25,20 @@ class ShellEmulator:
         self.root.geometry("800x500")
 
         self.output = scrolledtext.ScrolledText(
-            root, state='disabled', bg='black', fg='white', font=('Consolas', 10))
+            root, state='disabled', bg='black', fg='white',
+            font=('Consolas', 10)
+        )
         self.output.pack(fill='both', expand=True, padx=5, pady=5)
 
         self.entry = tk.Entry(root, bg='black', fg='white',
                               font=('Consolas', 10), insertbackground='white')
         self.entry.pack(fill='x', padx=5, pady=(0, 5))
         self.entry.bind('<Return>', self.on_enter)
+
+        # фокус на поле ввода
+        self.entry.focus_set()
+        self.root.after(100, self.entry.focus_force)
+        self.root.bind('<Button-1>', lambda e: self.entry.focus_set())
 
         self.cwd = '/'
         self.script_mode = False
@@ -33,6 +51,7 @@ class ShellEmulator:
         if params.get('script'):
             self.root.after(500, self.run_script)
 
+    # ---------- VFS ----------
     def load_vfs(self):
         path = self.params.get('vfs')
         if not path:
@@ -45,6 +64,7 @@ class ShellEmulator:
             self.append(f"Ошибка загрузки VFS: {e}")
             self.vfs = None
 
+    # ---------- Вывод ----------
     def append(self, text):
         self.output.configure(state='normal')
         self.output.insert('end', text + '\n')
@@ -54,6 +74,7 @@ class ShellEmulator:
     def print_prompt(self):
         self.append(f"{getpass.getuser()}@{socket.gethostname()}:{self.cwd}$ ")
 
+    # ---------- Обработка ввода ----------
     def on_enter(self, event):
         if self.script_mode:
             return
@@ -86,13 +107,24 @@ class ShellEmulator:
             self.append(f"Ошибка: VFS не загружен, команда '{cmd}' недоступна")
             return True
 
-        if cmd in ('ls', 'cd'):
-            self.append(f"{cmd}: {args}")
-            return None
+        handler = HANDLERS.get(cmd)
+        if handler is None:
+            self.append(f"Ошибка: неизвестная команда: {cmd}")
+            return True
 
-        self.append(f"Ошибка: неизвестная команда: {cmd}")
-        return True
+        try:
+            result = handler(self.vfs, self.cwd, args)
+        except CommandError as e:
+            self.append(str(e))
+            return True
 
+        if cmd == 'cd':
+            self.cwd = result
+        elif result is not None and result != "":
+            self.append(result)
+        return None
+
+    # ---------- Стартовый скрипт ----------
     def run_script(self):
         path = self.params.get('script')
         try:
@@ -111,10 +143,12 @@ class ShellEmulator:
                 self.script_mode = False
                 self.print_prompt()
                 return
+
             line = lines[idx].strip()
             if not line or line.startswith('#'):
                 self.root.after(50, run_next, idx + 1)
                 return
+
             self.append(line)
             result = self.execute(line)
             if result == 'EXIT':
@@ -124,6 +158,7 @@ class ShellEmulator:
                 self.append("--- Скрипт остановлен из-за ошибки ---")
                 self.script_mode = False
                 return
+
             self.root.after(300, run_next, idx + 1)
 
         self.root.after(300, run_next, 0)
